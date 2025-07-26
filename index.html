@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ollama Web Chat</title>
+</head>
+<body style="font-family: sans-serif; padding: 2rem;">
+  <h1>Ask Ollama</h1>
+
+  <textarea id="prompt" rows="4" cols="60" placeholder="Enter your prompt..."></textarea><br><br>
+  <button onclick="askOllama()">Ask</button>
+
+  <h2>Response:</h2>
+  <pre id="response" style="white-space: pre-wrap; background: #f0f0f0; padding: 1rem;"></pre>
+
+  <script>
+    async function askOllama() {
+      const prompt = document.getElementById("prompt").value;
+      const responseEl = document.getElementById("response");
+      responseEl.innerText = "Loading...";
+
+      try {
+        const res = await fetch("http://localhost:5000/api/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ prompt })
+        });
+
+        const data = await res.json();
+        responseEl.innerText = data.response || data.error || "No response";
+      } catch (err) {
+        responseEl.innerText = "Error: " + err.message;
+      }
+    }
+  </script>
+</body>
+</html>
+
